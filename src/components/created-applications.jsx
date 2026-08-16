@@ -22,20 +22,29 @@ const CreatedApplications = () => {
   }, []);
 
   if (loadingApplications) {
-    return <BarLoader className="mb-4" width={"100%"} color="#36d7b7" />;
+    return <BarLoader className="mb-4" width={"100%"} color="#6366F1" />;
   }
 
   return (
-    <div className="flex flex-col gap-2">
-      {applications?.map((application) => {
-        return (
-          <ApplicationCard
-            key={application.id}
-            application={application}
-            isCandidate={true}
-          />
-        );
-      })}
+    <div className="space-y-4">
+      {applications?.length ? (
+        applications.map((application) => {
+          return (
+            <ApplicationCard
+              key={application.id}
+              application={application}
+              isCandidate={true}
+            />
+          );
+        })
+      ) : (
+        <div className="text-center py-12 bg-card border border-primary/20 rounded-xl">
+          <p className="text-lg text-muted-foreground">No applications yet</p>
+          <p className="text-sm text-muted-foreground">
+            Browse jobs and apply to opportunities that interest you
+          </p>
+        </div>
+      )}
     </div>
   );
 };

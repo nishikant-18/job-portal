@@ -3,7 +3,13 @@ import { BarLoader } from "react-spinners";
 import MDEditor from "@uiw/react-md-editor";
 import { useParams } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
-import { Briefcase, DoorClosed, DoorOpen, MapPinIcon } from "lucide-react";
+import {
+  Briefcase,
+  DoorClosed,
+  DoorOpen,
+  MapPinIcon,
+  Users,
+} from "lucide-react";
 
 import {
   Select,
@@ -38,7 +44,7 @@ const JobPage = () => {
     updateHiringStatus,
     {
       job_id: id,
-    }
+    },
   );
 
   const handleStatusChange = (value) => {
@@ -47,33 +53,58 @@ const JobPage = () => {
   };
 
   if (!isLoaded || loadingJob) {
-    return <BarLoader className="mb-4" width={"100%"} color="#36d7b7" />;
+    return <BarLoader className="mb-4" width={"100%"} color="#6366F1" />;
   }
 
   return (
     <div className="flex flex-col gap-8 mt-5">
-      <div className="flex flex-col-reverse gap-6 md:flex-row justify-between items-center">
-        <h1 className="gradient-title font-extrabold pb-3 text-4xl sm:text-6xl">
-          {job?.title}
-        </h1>
-        <img src={job?.company?.logo_url} className="h-12" alt={job?.title} />
+      <div className="flex flex-col-reverse gap-6 md:flex-row justify-between items-start md:items-center bg-card border border-primary/20 p-6 rounded-xl">
+        <div className="flex-1">
+          <h1 className="gradient-title font-extrabold pb-3 text-4xl sm:text-6xl">
+            {job?.title}
+          </h1>
+          <p className="text-muted-foreground text-sm sm:text-base">
+            {job?.company?.name}
+          </p>
+        </div>
+        <img
+          src={job?.company?.logo_url}
+          className="h-12 sm:h-16 rounded-lg"
+          alt={job?.title}
+        />
       </div>
 
-      <div className="flex justify-between ">
-        <div className="flex gap-2">
-          <MapPinIcon /> {job?.location}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="bg-card border border-primary/20 p-4 rounded-lg flex items-center gap-3">
+          <MapPinIcon className="text-primary" size={20} />
+          <div>
+            <p className="text-xs text-muted-foreground">Location</p>
+            <p className="font-semibold">{job?.location}</p>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <Briefcase /> {job?.applications?.length} Applicants
+        <div className="bg-card border border-primary/20 p-4 rounded-lg flex items-center gap-3">
+          <Users className="text-primary" size={20} />
+          <div>
+            <p className="text-xs text-muted-foreground">Applicants</p>
+            <p className="font-semibold">{job?.applications?.length}</p>
+          </div>
         </div>
-        <div className="flex gap-2">
+        <div className="bg-card border border-primary/20 p-4 rounded-lg flex items-center gap-3">
           {job?.isOpen ? (
             <>
-              <DoorOpen /> Open
+              <DoorOpen className="text-primary" size={20} />
+              <div>
+                <p className="text-xs text-muted-foreground">Status</p>
+                <p className="font-semibold text-primary">Open</p>
+              </div>
             </>
           ) : (
             <>
-              <DoorClosed /> Closed
+              <DoorClosed className="text-destructive" size={20} />
+              <div>
+                <p className="text-xs text-muted-foreground">Status</p>
+                <p className="font-semibold text-destructive">Closed</p>
+              </div>
             </>
           )}
         </div>
@@ -82,7 +113,7 @@ const JobPage = () => {
       {job?.recruiter_id === user?.id && (
         <Select onValueChange={handleStatusChange}>
           <SelectTrigger
-            className={`w-full ${job?.isOpen ? "bg-green-950" : "bg-red-950"}`}
+            className={`w-full font-semibold ${job?.isOpen ? "bg-primary/20 border-primary/50" : "bg-destructive/20 border-destructive/50"}`}
           >
             <SelectValue
               placeholder={
@@ -97,16 +128,25 @@ const JobPage = () => {
         </Select>
       )}
 
-      <h2 className="text-2xl sm:text-3xl font-bold">About the job</h2>
-      <p className="sm:text-lg">{job?.description}</p>
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4">About the job</h2>
+          <p className="sm:text-lg text-muted-foreground leading-relaxed">
+            {job?.description}
+          </p>
+        </div>
 
-      <h2 className="text-2xl sm:text-3xl font-bold">
-        What we are looking for
-      </h2>
-      <MDEditor.Markdown
-        source={job?.requirements}
-        className="bg-transparent sm:text-lg" // add global ul styles - tutorial
-      />
+        <div>
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4">
+            What we are looking for
+          </h2>
+          <MDEditor.Markdown
+            source={job?.requirements}
+            className="bg-transparent sm:text-lg text-muted-foreground"
+          />
+        </div>
+      </div>
+
       {job?.recruiter_id !== user?.id && (
         <ApplyJobDrawer
           job={job}
@@ -115,15 +155,20 @@ const JobPage = () => {
           applied={job?.applications?.find((ap) => ap.candidate_id === user.id)}
         />
       )}
-      {loadingHiringStatus && <BarLoader width={"100%"} color="#36d7b7" />}
+      {loadingHiringStatus && <BarLoader width={"100%"} color="#6366F1" />}
       {job?.applications?.length > 0 && job?.recruiter_id === user?.id && (
-        <div className="flex flex-col gap-2">
-          <h2 className="font-bold mb-4 text-xl ml-1">Applications</h2>
-          {job?.applications.map((application) => {
-            return (
-              <ApplicationCard key={application.id} application={application} />
-            );
-          })}
+        <div className="flex flex-col gap-4">
+          <h2 className="font-bold text-2xl">Applications</h2>
+          <div className="grid gap-4">
+            {job?.applications.map((application) => {
+              return (
+                <ApplicationCard
+                  key={application.id}
+                  application={application}
+                />
+              );
+            })}
+          </div>
         </div>
       )}
     </div>

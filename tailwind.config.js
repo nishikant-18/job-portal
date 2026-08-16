@@ -9,6 +9,10 @@ module.exports = {
   ],
   prefix: "",
   theme: {
+    fontFamily: {
+      sans: ["Plus Jakarta Sans", "Inter", "system-ui", "sans-serif"],
+      mono: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+    },
     container: {
       center: true,
       padding: "2rem",

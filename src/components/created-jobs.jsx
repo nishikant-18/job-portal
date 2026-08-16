@@ -24,22 +24,31 @@ const CreatedJobs = () => {
   return (
     <div>
       {loadingCreatedJobs ? (
-        <BarLoader className="mt-4" width={"100%"} color="#36d7b7" />
+        <BarLoader className="mt-4" width={"100%"} color="#6366F1" />
       ) : (
-        <div className="mt-8 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="mt-8">
           {createdJobs?.length ? (
-            createdJobs.map((job) => {
-              return (
-                <JobCard
-                  key={job.id}
-                  job={job}
-                  onJobAction={fnCreatedJobs}
-                  isMyJob
-                />
-              );
-            })
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {createdJobs.map((job) => {
+                return (
+                  <JobCard
+                    key={job.id}
+                    job={job}
+                    onJobAction={fnCreatedJobs}
+                    isMyJob
+                  />
+                );
+              })}
+            </div>
           ) : (
-            <div>No Jobs Found 😢</div>
+            <div className="text-center py-12">
+              <p className="text-lg text-muted-foreground">
+                No jobs posted yet
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Start by posting your first job to attract candidates
+              </p>
+            </div>
           )}
         </div>
       )}

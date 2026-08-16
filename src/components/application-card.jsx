@@ -1,5 +1,11 @@
 /* eslint-disable react/prop-types */
-import { Boxes, BriefcaseBusiness, Download, School } from "lucide-react";
+import {
+  Boxes,
+  BriefcaseBusiness,
+  Download,
+  School,
+  Calendar,
+} from "lucide-react";
 import {
   Card,
   CardContent,
@@ -17,6 +23,7 @@ import {
 import { updateApplicationStatus } from "@/api/apiApplication";
 import useFetch from "@/hooks/use-fetch";
 import { BarLoader } from "react-spinners";
+import { Button } from "./ui/button";
 
 const ApplicationCard = ({ application, isCandidate = false }) => {
   const handleDownload = () => {
@@ -30,57 +37,87 @@ const ApplicationCard = ({ application, isCandidate = false }) => {
     updateApplicationStatus,
     {
       job_id: application.job_id,
-    }
+    },
   );
 
   const handleStatusChange = (status) => {
     fnHiringStatus(status).then(() => fnHiringStatus());
   };
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "hired":
+        return "bg-primary/20 text-primary border-primary/50";
+      case "rejected":
+        return "bg-destructive/20 text-destructive border-destructive/50";
+      case "interviewing":
+        return "bg-purple-500/20 text-purple-300 border-purple-500/50";
+      default:
+        return "bg-muted/50 text-muted-foreground border-muted/50";
+    }
+  };
+
   return (
-    <Card>
-      {loadingHiringStatus && <BarLoader width={"100%"} color="#36d7b7" />}
+    <Card className="border-primary/20">
+      {loadingHiringStatus && <BarLoader width={"100%"} color="#6366F1" />}
       <CardHeader>
-        <CardTitle className="flex justify-between font-bold">
-          {isCandidate
-            ? `${application?.job?.title} at ${application?.job?.company?.name}`
-            : application?.name}
-          <Download
-            size={18}
-            className="bg-white text-black rounded-full h-8 w-8 p-1.5 cursor-pointer"
+        <CardTitle className="flex justify-between font-bold items-start gap-4">
+          <div className="flex-1">
+            {isCandidate
+              ? `${application?.job?.title} at ${application?.job?.company?.name}`
+              : application?.name}
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
             onClick={handleDownload}
-          />
+            className="shrink-0"
+          >
+            <Download size={16} className="mr-1" />
+            Resume
+          </Button>
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4 flex-1">
-        <div className="flex flex-col md:flex-row justify-between">
-          <div className="flex gap-2 items-center">
-            <BriefcaseBusiness size={15} /> {application?.experience} years of
-            experience
+        <div className="grid grid-cols-3 gap-3 text-sm">
+          <div className="flex gap-2 items-center bg-secondary p-2 rounded-lg">
+            <BriefcaseBusiness size={16} className="text-primary" />
+            <span className="text-muted-foreground">
+              {application?.experience} yrs
+            </span>
           </div>
-          <div className="flex gap-2 items-center">
-            <School size={15} />
-            {application?.education}
+          <div className="flex gap-2 items-center bg-secondary p-2 rounded-lg">
+            <School size={16} className="text-primary" />
+            <span className="text-muted-foreground text-xs">
+              {application?.education}
+            </span>
           </div>
-          <div className="flex gap-2 items-center">
-            <Boxes size={15} /> Skills: {application?.skills}
+          <div className="flex gap-2 items-center bg-secondary p-2 rounded-lg">
+            <Boxes size={16} className="text-primary" />
+            <span className="text-muted-foreground truncate text-xs">
+              {application?.skills}
+            </span>
           </div>
         </div>
-        <hr />
       </CardContent>
-      <CardFooter className="flex justify-between">
-        <span>{new Date(application?.created_at).toLocaleString()}</span>
+      <CardFooter className="flex justify-between items-center gap-4 pt-4">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <Calendar size={14} />
+          {new Date(application?.created_at).toLocaleDateString()}
+        </div>
         {isCandidate ? (
-          <span className="capitalize font-bold">
-            Status: {application.status}
+          <span
+            className={`capitalize font-semibold px-3 py-1 rounded-full text-xs border ${getStatusColor(application.status)}`}
+          >
+            {application.status}
           </span>
         ) : (
           <Select
             onValueChange={handleStatusChange}
             defaultValue={application.status}
           >
-            <SelectTrigger className="w-52">
-              <SelectValue placeholder="Application Status" />
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder="Update Status" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="applied">Applied</SelectItem>

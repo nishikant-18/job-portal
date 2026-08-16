@@ -4,6 +4,7 @@ import useFetch from "@/hooks/use-fetch";
 import { useUser } from "@clerk/clerk-react";
 import { useEffect } from "react";
 import { BarLoader } from "react-spinners";
+import { Heart } from "lucide-react";
 
 const SavedJobs = () => {
   const { isLoaded } = useUser();
@@ -22,30 +23,47 @@ const SavedJobs = () => {
   }, [isLoaded]);
 
   if (!isLoaded || loadingSavedJobs) {
-    return <BarLoader className="mb-4" width={"100%"} color="#36d7b7" />;
+    return <BarLoader className="mb-4" width={"100%"} color="#6366F1" />;
   }
 
   return (
-    <div>
-      <h1 className="gradient-title font-extrabold text-6xl sm:text-7xl text-center pb-8">
-        Saved Jobs
-      </h1>
+    <div className="space-y-8">
+      <div className="text-center space-y-2">
+        <h1 className="gradient-title font-extrabold text-5xl sm:text-6xl lg:text-7xl flex items-center justify-center gap-3">
+          <Heart size={40} className="text-primary fill-primary" />
+          Saved Jobs
+        </h1>
+        <p className="text-muted-foreground text-sm sm:text-base">
+          Your collection of jobs you're interested in
+        </p>
+      </div>
 
       {loadingSavedJobs === false && (
-        <div className="mt-8 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="mt-8">
           {savedJobs?.length ? (
-            savedJobs?.map((saved) => {
-              return (
-                <JobCard
-                  key={saved.id}
-                  job={saved?.job}
-                  onJobAction={fnSavedJobs}
-                  savedInit={true}
-                />
-              );
-            })
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {savedJobs?.map((saved) => {
+                return (
+                  <JobCard
+                    key={saved.id}
+                    job={saved?.job}
+                    onJobAction={fnSavedJobs}
+                    savedInit={true}
+                  />
+                );
+              })}
+            </div>
           ) : (
-            <div>No Saved Jobs 👀</div>
+            <div className="text-center py-16">
+              <Heart
+                size={48}
+                className="mx-auto text-muted-foreground/30 mb-4"
+              />
+              <p className="text-lg text-muted-foreground">No saved jobs yet</p>
+              <p className="text-sm text-muted-foreground">
+                Start saving jobs to keep track of opportunities you like
+              </p>
+            </div>
           )}
         </div>
       )}
