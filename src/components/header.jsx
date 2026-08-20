@@ -8,11 +8,13 @@ import {
   useUser,
 } from "@clerk/clerk-react";
 import { Button } from "./ui/button";
-import { BriefcaseBusiness, Heart, PenBox } from "lucide-react";
+import { BriefcaseBusiness, Heart, Moon, PenBox, Sun } from "lucide-react";
 import { HireGramLogoWithText } from "./hiregram-logo";
+import { useTheme } from "./theme-provider";
 
 const Header = () => {
   const [showSignIn, setShowSignIn] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   const [search, setSearch] = useSearchParams();
   const { user } = useUser();
@@ -30,14 +32,26 @@ const Header = () => {
     }
   };
 
+  const toggleTheme = () => setTheme(theme === "dark" ? "light" : "dark");
+
   return (
     <>
-      <nav className="py-4 px-4 md:px-6 flex justify-between items-center border-b border-border/20 backdrop-blur-sm bg-background/80">
+      <nav className="py-4 px-4 md:px-6 flex justify-between items-center border-b border-border/60 backdrop-blur-sm bg-background/80">
         <Link to="/" className="hover:opacity-80 transition-opacity">
           <HireGramLogoWithText size={32} textSize="text-lg" />
         </Link>
 
-        <div className="flex gap-4 md:gap-8 items-center">
+        <div className="flex gap-2 md:gap-4 items-center">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleTheme}
+            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+            title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+            className="text-muted-foreground hover:text-primary"
+          >
+            {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+          </Button>
           <SignedOut>
             <Button
               variant="outline"

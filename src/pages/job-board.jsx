@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
 import { State } from "country-state-city";
 import { BarLoader } from "react-spinners";
 import useFetch from "@/hooks/use-fetch";
 
-import JobCard from "@/components/job-card";
+import OpportunityCard from "@/components/opportunity-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -20,8 +21,11 @@ import { getCompanies } from "@/api/apiCompanies";
 import { getJobs } from "@/api/apiJobs";
 import { Search, MapPin, Building2 } from "lucide-react";
 
-const JobListing = () => {
-  const [searchQuery, setSearchQuery] = useState("");
+const JobBoard = () => {
+  const [searchParams] = useSearchParams();
+  const [searchQuery, setSearchQuery] = useState(
+    () => searchParams.get("search") || "",
+  );
   const [location, setLocation] = useState("");
   const [company_id, setCompany_id] = useState("");
 
@@ -154,28 +158,40 @@ const JobListing = () => {
       )}
 
       {loadingJobs === false && (
-        <div className="mt-8 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {jobs?.length ? (
-            jobs.map((job) => {
-              return (
-                <JobCard
-                  key={job.id}
-                  job={job}
-                  savedInit={job?.saved?.length > 0}
-                />
-              );
-            })
-          ) : (
-            <div className="col-span-full text-center py-12">
-              <p className="text-lg text-muted-foreground">
-                No jobs found matching your criteria 😢
-              </p>
-            </div>
-          )}
-        </div>
+        <>
+          <div className="flex items-center justify-between border-b border-border/60 pb-3 text-sm">
+            <p className="text-muted-foreground">
+              {jobs?.length || 0} opportunities ready to explore
+            </p>
+            {(searchQuery || location || company_id) && (
+              <span className="rounded-full bg-primary/10 px-3 py-1 text-primary">
+                Filters active
+              </span>
+            )}
+          </div>
+          <div className="mt-8 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {jobs?.length ? (
+              jobs.map((job) => {
+                return (
+                  <OpportunityCard
+                    key={job.id}
+                    job={job}
+                    savedInit={job?.saved?.length > 0}
+                  />
+                );
+              })
+            ) : (
+              <div className="col-span-full text-center py-12">
+                <p className="text-lg text-muted-foreground">
+                  No jobs found matching your criteria 😢
+                </p>
+              </div>
+            )}
+          </div>
+        </>
       )}
     </div>
   );
 };
 
-export default JobListing;
+export default JobBoard;

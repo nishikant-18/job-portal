@@ -2,7 +2,7 @@ import { getMyJobs } from "@/api/apiJobs";
 import useFetch from "@/hooks/use-fetch";
 import { useUser } from "@clerk/clerk-react";
 import { BarLoader } from "react-spinners";
-import JobCard from "./job-card";
+import OpportunityCard from "./opportunity-card";
 import { useEffect } from "react";
 
 const CreatedJobs = () => {
@@ -31,7 +31,7 @@ const CreatedJobs = () => {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {createdJobs.map((job) => {
                 return (
-                  <JobCard
+                  <OpportunityCard
                     key={job.id}
                     job={job}
                     onJobAction={fnCreatedJobs}

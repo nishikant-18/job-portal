@@ -1,13 +1,13 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
-import AppLayout from "./layouts/app-layout";
+import PortalShell from "./layouts/portal-shell";
 import ProtectedRoute from "./components/protected-route";
 import { ThemeProvider } from "./components/theme-provider";
 
 import LandingPage from "./pages/landing";
 import Onboarding from "./pages/onboarding";
 import PostJob from "./pages/post-job";
-import JobListing from "./pages/jobListing";
+import JobBoard from "./pages/job-board";
 import MyJobs from "./pages/my-jobs";
 import SavedJobs from "./pages/saved-jobs";
 import JobPage from "./pages/job";
@@ -16,7 +16,7 @@ import "./App.css";
 
 const router = createBrowserRouter([
   {
-    element: <AppLayout />,
+    element: <PortalShell />,
     children: [
       {
         path: "/",
@@ -34,7 +34,7 @@ const router = createBrowserRouter([
         path: "/jobs",
         element: (
           <ProtectedRoute>
-            <JobListing />
+            <JobBoard />
           </ProtectedRoute>
         ),
       },
@@ -76,7 +76,7 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+    <ThemeProvider defaultTheme="system" storageKey="hiregram-theme">
       <RouterProvider router={router} />
     </ThemeProvider>
   );

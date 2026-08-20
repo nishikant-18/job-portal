@@ -15,7 +15,7 @@ import { useUser } from "@clerk/clerk-react";
 import { useEffect, useState } from "react";
 import { BarLoader } from "react-spinners";
 
-const JobCard = ({
+const OpportunityCard = ({
   job,
   savedInit = false,
   onJobAction = () => {},
@@ -120,4 +120,4 @@ const JobCard = ({
   );
 };
 
-export default JobCard;
+export default OpportunityCard;

@@ -1,5 +1,5 @@
 import { getSavedJobs } from "@/api/apiJobs";
-import JobCard from "@/components/job-card";
+import OpportunityCard from "@/components/opportunity-card";
 import useFetch from "@/hooks/use-fetch";
 import { useUser } from "@clerk/clerk-react";
 import { useEffect } from "react";
@@ -34,7 +34,7 @@ const SavedJobs = () => {
           Saved Jobs
         </h1>
         <p className="text-muted-foreground text-sm sm:text-base">
-          Your collection of jobs you're interested in
+          Your collection of jobs you&apos;re interested in
         </p>
       </div>
 
@@ -44,7 +44,7 @@ const SavedJobs = () => {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {savedJobs?.map((saved) => {
                 return (
-                  <JobCard
+                  <OpportunityCard
                     key={saved.id}
                     job={saved?.job}
                     onJobAction={fnSavedJobs}
