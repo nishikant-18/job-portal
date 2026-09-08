@@ -84,6 +84,19 @@ pipeline {
                 '''
             }
         }
+        stage('Deploy') {
+            steps {
+                sh '''
+                    docker rm -f job-portal-app 2>/dev/null || true
+
+                    docker run -d \
+                    --name job-portal-app \
+                    --restart unless-stopped \
+                    -p 8080:80 \
+                    ${DOCKER_IMAGE}:${BUILD_NUMBER}
+                '''
+            }
+        }
     }
 
     post {
