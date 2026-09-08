@@ -82,10 +82,26 @@ pipeline {
                     docker rm -f job-portal-app 2>/dev/null || true
 
                     docker run -d \
-                      --name job-portal-app \
-                      --restart unless-stopped \
-                      -p 8080:80 \
-                      ${DOCKER_IMAGE}:${BUILD_NUMBER}
+                        --name job-portal-app \
+                        --restart unless-stopped \
+                        -p 8080:80 \
+                        ${DOCKER_IMAGE}:${BUILD_NUMBER}
+
+                    echo "Waiting for application to start..."
+
+                    for i in {1..10}; do
+                        if curl -fsS http://host.docker.internal:8080/ > /dev/null; then
+                            echo "✅ Application is healthy!"
+                            exit 0
+                        fi
+
+                        echo "Waiting... ($i/10)"
+                        sleep 2
+                    done
+
+                    echo "❌ Application health check failed!"
+                    docker logs job-portal-app
+                    exit 1
                 '''
             }
         }
