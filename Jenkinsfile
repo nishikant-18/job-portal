@@ -28,18 +28,6 @@ pipeline {
             }
         }
 
-        stage('Build') {
-            steps {
-                sh '''
-                    docker run --rm \
-                      -v ${JENKINS_VOLUME}:/var/jenkins_home \
-                      -w /var/jenkins_home/workspace/${JOB_NAME} \
-                      node:22-bookworm \
-                      npm run build
-                '''
-            }
-        }
-
         stage('SonarQube SAST') {
             steps {
                 withSonarQubeEnv('SonarQube') {
@@ -64,11 +52,14 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                sh '''
-                    docker build \
-                      -t ${DOCKER_IMAGE}:${BUILD_NUMBER} \
-                      .
-                '''
+                withCredentials([file(credentialsId: 'job-portal-env', variable: 'ENV_FILE')]) {
+                    sh '''
+                        DOCKER_BUILDKIT=1 docker build \
+                          --secret id=env,src="$ENV_FILE" \
+                          -t ${DOCKER_IMAGE}:${BUILD_NUMBER} \
+                          .
+                    '''
+                }
             }
         }
 
@@ -84,16 +75,17 @@ pipeline {
                 '''
             }
         }
+
         stage('Deploy') {
             steps {
                 sh '''
                     docker rm -f job-portal-app 2>/dev/null || true
 
                     docker run -d \
-                    --name job-portal-app \
-                    --restart unless-stopped \
-                    -p 8080:80 \
-                    ${DOCKER_IMAGE}:${BUILD_NUMBER}
+                      --name job-portal-app \
+                      --restart unless-stopped \
+                      -p 8080:80 \
+                      ${DOCKER_IMAGE}:${BUILD_NUMBER}
                 '''
             }
         }
