@@ -53,6 +53,7 @@ pipeline {
                 }
             }
         }
+
         stage('Quality Gate') {
             steps {
                 timeout(time: 5, unit: 'MINUTES') {
@@ -70,11 +71,24 @@ pipeline {
                 '''
             }
         }
+
+        stage('Trivy Container Scan') {
+            steps {
+                sh '''
+                    docker run --rm \
+                      -v /var/run/docker.sock:/var/run/docker.sock \
+                      aquasec/trivy:latest image \
+                      --severity CRITICAL \
+                      --exit-code 1 \
+                      ${DOCKER_IMAGE}:${BUILD_NUMBER}
+                '''
+            }
+        }
     }
 
     post {
         success {
-            echo '✅ Pipeline completed successfully!'
+            echo '✅ DevSecOps Pipeline completed successfully!'
         }
 
         failure {
