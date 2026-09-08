@@ -89,7 +89,7 @@ pipeline {
 
                     echo "Waiting for application to start..."
 
-                    for i in {1..10}; do
+                    for i in $(seq 1 10); do
                         if curl -fsS http://host.docker.internal:8080/ > /dev/null; then
                             echo "✅ Application is healthy!"
                             exit 0
