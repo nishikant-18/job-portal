@@ -109,7 +109,7 @@ pipeline {
                     docker run -d \
                         --name job-portal-app \
                         --restart unless-stopped \
-                        -p 8080:9999 \
+                        -p 8080:80 \
                         "$NEW_IMAGE"
 
                     echo "Waiting for application to start..."
