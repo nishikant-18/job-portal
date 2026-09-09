@@ -21,7 +21,7 @@ pipeline {
                 sh '''
                     docker run --rm \
                       -v "$WORKSPACE:/repo" \
-                      zricethezav/gitleaks:8.30.1 \
+                      zricethezav/gitleaks:v8.30.1 \
                       detect \
                       --source=/repo \
                       --no-banner \
