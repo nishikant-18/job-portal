@@ -16,6 +16,21 @@ pipeline {
             }
         }
 
+        stage('Gitleaks Secret Scan') {
+            steps {
+                sh '''
+                    docker run --rm \
+                      -v "$WORKSPACE:/repo" \
+                      zricethezav/gitleaks:8.30.1 \
+                      detect \
+                      --source=/repo \
+                      --no-banner \
+                      --redact \
+                      --exit-code 1
+                '''
+            }
+        }
+
         stage('Install Dependencies') {
             steps {
                 sh '''
